@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.guc.noticetest" >
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,8 +20,10 @@
             </intent-filter>
         </activity>
         <service android:name=".service.PushService"
-            />
-
+            android:process=":mqtt" />
+        <service
+            android:name="org.eclipse.paho.android.service.MqttService"
+            android:process=":mqtt" />
         <receiver
             android:name=".receiver.SystemBroadcastReceiver"
             android:enabled="true"
