@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.blankj.utilcode.util.DeviceUtils;
@@ -449,7 +450,7 @@ public class PushService extends Service {
         } else {
             Intent innerIntent = new Intent(this, GrayInnerService.class);
             startService(innerIntent);
-            startForeground(GRAY_SERVICE_ID, new Notification());
+            startForeground(GRAY_SERVICE_ID,new NotificationCompat.Builder(this, NoticeManager.CHANNEL_ID).build());
         }
     }
     /**
@@ -464,7 +465,7 @@ public class PushService extends Service {
         }
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
-            startForeground(GRAY_SERVICE_ID, new Notification());
+            startForeground(GRAY_SERVICE_ID, new NotificationCompat.Builder(this, NoticeManager.CHANNEL_ID).build());
             stopForeground(true);
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
