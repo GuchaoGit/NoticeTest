@@ -66,7 +66,7 @@ public class NoticeManager {
         manager.notify(id, notification);
     }
     private void initNoticeChannel() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             String channelName;
             int importance = NotificationManager.IMPORTANCE_HIGH;
             channelName = "通知消息";

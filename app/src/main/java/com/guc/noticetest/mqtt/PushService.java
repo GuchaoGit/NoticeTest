@@ -41,9 +41,10 @@ public class PushService extends Service {
     public static final String TAG = "PushService";
     private final static int GRAY_SERVICE_ID = 1001;
     private NoticeManager mNoticeManager;
-    private final String URL = "tcp://115.28.91.111:1883";
-    private final String USER_NAME = "fucunmeidian";
-    private final String PASSWORD = "9e946a091de88fb85ef4e17c73edd554";
+//    private final String URL = "tcp://192.168.20.158:1883";
+    private final String URL = "tcp://192.168.20.158:1883";
+    private final String USER_NAME = "admin";
+    private final String PASSWORD = "admin";
     private final int QOS = 0;
     private MqttAndroidClient mqttAndroidClient;
     private Map<String, String> topicsMap = new HashMap<>();
@@ -209,7 +210,7 @@ public class PushService extends Service {
     //endregion
     //region 私有方法
     private void connect() {
-        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(),URL, DeviceUtils.getAndroidID());
+        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(),URL, "hello");
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -221,6 +222,7 @@ public class PushService extends Service {
                 if (reconnect){//重新订阅主题
                     reSubscribe();
                 }
+                subscribe("hello");
             }
 
             @Override
@@ -235,6 +237,7 @@ public class PushService extends Service {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.e(TAG,"messageArrived，主题：" + topic + "\n内容：" + message.toString());
+                mNoticeManager.sendNotice(2,topic,message.toString(),true);
             }
 
             @Override
@@ -264,7 +267,7 @@ public class PushService extends Service {
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.e(TAG,"mqttAndroidClient.connect onFailure");
+                    Log.e(TAG,"mqttAndroidClient.connect onFailure"+ exception.getMessage());
                 }
             });
         } catch (MqttException e) {
