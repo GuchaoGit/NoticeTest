@@ -9,7 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.guc.noticetest.MainActivity;
 import com.guc.noticetest.R;
@@ -21,6 +24,7 @@ import com.guc.noticetest.R;
 public class NoticeManager {
     public static final String CHANNEL_ID = "notice";
     public static final String CHANNEL_ID_SUB = "notice_sub";
+    private int mNotificationId;
 
     private static NoticeManager mNotcieManager;
     private Context mContext;
@@ -51,8 +55,23 @@ public class NoticeManager {
      */
     public void sendNotice(int id, String title, String text,boolean autoCancle) throws Exception{
         if (mContext == null) throw new Exception("context is not init");
+        mNotificationId++;
+        if (mNotificationId >= 99999) {
+            mNotificationId = 0;
+        }
         NotificationManager manager = (NotificationManager)mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
-        Notification notification = new NotificationCompat.Builder(mContext, CHANNEL_ID)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = manager.getNotificationChannel(CHANNEL_ID);
+            if (channel.getImportance() == NotificationManager.IMPORTANCE_NONE) {
+                Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, mContext.getPackageName());
+                intent.putExtra(Settings.EXTRA_CHANNEL_ID, channel.getId());
+                mContext.startActivity(intent);
+                Toast.makeText(mContext, "请手动将通知打开", Toast.LENGTH_SHORT).show();
+            }
+        }
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext, CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setWhen(System.currentTimeMillis())
@@ -60,10 +79,14 @@ public class NoticeManager {
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher_foreground))
                 .setContentIntent(getPendingIntent())
                 .setAutoCancel(autoCancle)
-                .setDefaults(Notification.DEFAULT_ALL)
-                .build();
+                .setDefaults(Notification.DEFAULT_ALL);
+        RemoteViews rvSmall = new RemoteViews(mContext.getPackageName(),R.layout.layout_notices_small);//自定义通知栏
+        RemoteViews rv = new RemoteViews(mContext.getPackageName(),R.layout.layout_notices);//自定义通知栏
+//        builder.setCustomBigContentView(rv);
+        notification.setContent(rvSmall);
+        notification.setCustomBigContentView(rv);
 //        notification.flags = Notification.FLAG_AUTO_CANCEL;
-        manager.notify(id, notification);
+        manager.notify(mNotificationId, notification.build());
     }
     private void initNoticeChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

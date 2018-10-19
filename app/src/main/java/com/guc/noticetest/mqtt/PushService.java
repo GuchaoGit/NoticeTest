@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.blankj.utilcode.util.DeviceUtils;
 import com.blankj.utilcode.util.NetworkUtils;
 import com.guc.noticetest.utils.NoticeManager;
 
@@ -64,18 +63,18 @@ public class PushService extends Service {
         Log.e(TAG,"onCreate");
         registerSystemReceiver();
         mNoticeManager = NoticeManager.getInstance().init(this);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (mNoticeManager!=null){
-                    try{
-                        mNoticeManager.sendNotice(1, "收到一条通知消息", "服务接收到通知",true);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        },10000);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (mNoticeManager!=null){
+//                    try{
+//                        mNoticeManager.sendNotice(1, "收到一条通知消息", "服务接收到通知",true);
+//                    }catch (Exception e){
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        },10000);
     }
 
     @Nullable
@@ -210,7 +209,7 @@ public class PushService extends Service {
     //endregion
     //region 私有方法
     private void connect() {
-        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(),URL, "hello");
+        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(),URL, "hello-1");
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -221,8 +220,10 @@ public class PushService extends Service {
                 mSendBroadcast(event);
                 if (reconnect){//重新订阅主题
                     reSubscribe();
+                }else {
+                    subscribe("hello.ptp");
+                    subscribe("hello");
                 }
-                subscribe("hello");
             }
 
             @Override
@@ -309,6 +310,7 @@ public class PushService extends Service {
         if (mqttAndroidClient != null && mqttAndroidClient.isConnected()) {
             try {
                 mqttAndroidClient.subscribe(topic, QOS);
+                Log.e(TAG,"订阅了主题:"+topic);
             } catch (MqttException e) {
                 e.printStackTrace();
             }

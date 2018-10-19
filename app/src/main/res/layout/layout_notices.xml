@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+       >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_icon_app"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:background="@mipmap/ic_launcher"/>
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/iv_icon_app"
+                android:text="预警信息"
+                android:textColor="@color/colorBlackLight" />
+
+            <TextView
+                android:id="@+id/tv_create_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/colorBlackLight"
+                android:text="18:03"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/iv_icon_notice"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:background="@drawable/icon_warn2"/>
+
+            <TextView
+                android:id="@+id/tv_title_notice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/iv_icon_notice"
+                android:text="消息提醒"
+                android:textColor="@color/colorBlack"
+                android:textStyle="bold"/>
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_sfry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlackLight"
+            android:text="涉访人员：曹才艺"/>
+        <TextView
+            android:id="@+id/tv_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlackLight"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="预警内容：辖区非访人员【曹才艺】状态更改为【失控】"/>
+    </LinearLayout>
+
+</LinearLayout>
