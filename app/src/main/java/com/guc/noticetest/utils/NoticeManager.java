@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
@@ -53,12 +54,12 @@ public class NoticeManager {
      * @param text
      * @param autoCancle  是否自动取消
      */
-    public void sendNotice(int id, String title, String text,boolean autoCancle) throws Exception{
+    public synchronized void sendNotice(int id, String title, String text,boolean autoCancle) throws Exception{
         if (mContext == null) throw new Exception("context is not init");
-        mNotificationId++;
-        if (mNotificationId >= 99999) {
+        if (mNotificationId > 4) {
             mNotificationId = 0;
         }
+        Log.e("notice_number",mNotificationId+"条");
         NotificationManager manager = (NotificationManager)mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -87,6 +88,7 @@ public class NoticeManager {
         notification.setCustomBigContentView(rv);
 //        notification.flags = Notification.FLAG_AUTO_CANCEL;
         manager.notify(mNotificationId, notification.build());
+        mNotificationId++;
     }
     private void initNoticeChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

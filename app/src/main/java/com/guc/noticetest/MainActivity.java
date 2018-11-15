@@ -28,10 +28,12 @@ public class MainActivity extends AppCompatActivity {
                 PushService.connect(this);
                 break;
             case R.id.btn_send_notice://接收通知
-                try{
-                    mNoticeManager.sendNotice(1, "收到一条通知消息", "今天中午吃什么？",true);
-                }catch (Exception e){
-                    e.printStackTrace();
+                for (int i = 0;i<15;i++){
+                    try{
+                        mNoticeManager.sendNotice(1, "收到一条通知消息", "今天中午吃什么？",true);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }
                 break;
         }

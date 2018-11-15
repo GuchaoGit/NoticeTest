@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
@@ -41,10 +40,11 @@ public class PushService extends Service {
     private final static int GRAY_SERVICE_ID = 1001;
     private NoticeManager mNoticeManager;
 //    private final String URL = "tcp://192.168.20.158:1883";
-    private final String URL = "tcp://192.168.20.158:1883";
+    private final String URL = "tcp://192.168.10.204:1883";
+//    private final String URL = "tcp://192.168.30.153:1883";
     private final String USER_NAME = "admin";
     private final String PASSWORD = "admin";
-    private final int QOS = 0;
+    private final int QOS = 1;
     private MqttAndroidClient mqttAndroidClient;
     private Map<String, String> topicsMap = new HashMap<>();
 
@@ -209,7 +209,7 @@ public class PushService extends Service {
     //endregion
     //region 私有方法
     private void connect() {
-        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(),URL, "hello-1");
+        mqttAndroidClient = new MqttAndroidClient(getApplicationContext(),URL, "hello_1");
         mqttAndroidClient.setCallback(new MqttCallbackExtended() {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
@@ -238,6 +238,7 @@ public class PushService extends Service {
             @Override
             public void messageArrived(String topic, MqttMessage message) throws Exception {
                 Log.e(TAG,"messageArrived，主题：" + topic + "\n内容：" + message.toString());
+                mSendBroadcast(new MqttMessageEvent());
                 mNoticeManager.sendNotice(2,topic,message.toString(),true);
             }
 
@@ -249,8 +250,8 @@ public class PushService extends Service {
         MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
         mqttConnectOptions.setAutomaticReconnect(true);
         mqttConnectOptions.setKeepAliveInterval(10);
-        mqttConnectOptions.setConnectionTimeout(60 * 3);
-        mqttConnectOptions.setCleanSession(true);
+        mqttConnectOptions.setConnectionTimeout(50);
+        mqttConnectOptions.setCleanSession(false);
         mqttConnectOptions.setUserName(USER_NAME);
         mqttConnectOptions.setPassword(PASSWORD.toCharArray());
         try {
@@ -258,19 +259,22 @@ public class PushService extends Service {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.e(TAG,"mqttAndroidClient.connect onSuccess");
+
                     DisconnectedBufferOptions disconnectedBufferOptions = new DisconnectedBufferOptions();
                     disconnectedBufferOptions.setBufferEnabled(true);
-                    disconnectedBufferOptions.setBufferSize(100);
+                    disconnectedBufferOptions.setBufferSize(3);
                     disconnectedBufferOptions.setPersistBuffer(false);
-                    disconnectedBufferOptions.setDeleteOldestMessages(false);
+                    disconnectedBufferOptions.setDeleteOldestMessages(true);
                     mqttAndroidClient.setBufferOpts(disconnectedBufferOptions);
                 }
 
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
                     Log.e(TAG,"mqttAndroidClient.connect onFailure"+ exception.getMessage());
+                    exception.printStackTrace();
                 }
             });
+
         } catch (MqttException e) {
             e.printStackTrace();
         }
