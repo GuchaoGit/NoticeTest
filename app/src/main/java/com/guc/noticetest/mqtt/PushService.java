@@ -40,7 +40,7 @@ public class PushService extends Service {
     private final static int GRAY_SERVICE_ID = 1001;
     private NoticeManager mNoticeManager;
 //    private final String URL = "tcp://192.168.20.158:1883";
-    private final String URL = "tcp://192.168.10.204:1883";
+    private final String URL = "tcp://192.168.10.204:1883?jms.prefetchPolicy.all=10";
 //    private final String URL = "tcp://192.168.30.153:1883";
     private final String USER_NAME = "admin";
     private final String PASSWORD = "admin";

@@ -26,6 +26,7 @@ public class NoticeManager {
     public static final String CHANNEL_ID = "notice";
     public static final String CHANNEL_ID_SUB = "notice_sub";
     private int mNotificationId;
+    NotificationManager manager;
 
     private static NoticeManager mNotcieManager;
     private Context mContext;
@@ -56,11 +57,11 @@ public class NoticeManager {
      */
     public synchronized void sendNotice(int id, String title, String text,boolean autoCancle) throws Exception{
         if (mContext == null) throw new Exception("context is not init");
-        if (mNotificationId > 4) {
+        if (mNotificationId >= 10) {
             mNotificationId = 0;
         }
-        Log.e("notice_number",mNotificationId+"条");
-        NotificationManager manager = (NotificationManager)mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
+        if (manager==null)
+        manager = (NotificationManager)mContext.getSystemService(mContext.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = manager.getNotificationChannel(CHANNEL_ID);
@@ -73,8 +74,8 @@ public class NoticeManager {
             }
         }
         NotificationCompat.Builder notification = new NotificationCompat.Builder(mContext, CHANNEL_ID)
-                .setContentTitle(title)
-                .setContentText(text)
+                .setContentTitle(title+mNotificationId)
+                .setContentText(text+mNotificationId)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_launcher_background)
                 .setLargeIcon(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.ic_launcher_foreground))
@@ -83,11 +84,15 @@ public class NoticeManager {
                 .setDefaults(Notification.DEFAULT_ALL);
         RemoteViews rvSmall = new RemoteViews(mContext.getPackageName(),R.layout.layout_notices_small);//自定义通知栏
         RemoteViews rv = new RemoteViews(mContext.getPackageName(),R.layout.layout_notices);//自定义通知栏
+        rvSmall.setTextViewText(R.id.tv_title,title+mNotificationId);
 //        builder.setCustomBigContentView(rv);
         notification.setContent(rvSmall);
         notification.setCustomBigContentView(rv);
 //        notification.flags = Notification.FLAG_AUTO_CANCEL;
+//        manager.cancel(mNotificationId-10);
+//        Log.e("notice_number_cancel",(mNotificationId-10)+"条");
         manager.notify(mNotificationId, notification.build());
+        Log.e("notice_number",mNotificationId+"条");
         mNotificationId++;
     }
     private void initNoticeChannel() {

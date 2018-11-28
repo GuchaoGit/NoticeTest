@@ -18,20 +18,25 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mNoticeManager= NoticeManager.getInstance().init(this);
+        mNoticeManager = NoticeManager.getInstance().init(this);
     }
 
     @OnClick({R.id.btn_start_service, R.id.btn_send_notice})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_start_service://模拟发送通知
-                PushService.connect(this);
+//                PushService.connect(this);
+                try {
+                    mNoticeManager.sendNotice(1, "收到一条通知消息", "已经吃了", true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case R.id.btn_send_notice://接收通知
-                for (int i = 0;i<15;i++){
-                    try{
-                        mNoticeManager.sendNotice(1, "收到一条通知消息", "今天中午吃什么？",true);
-                    }catch (Exception e){
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        mNoticeManager.sendNotice(1, "收到一条通知消息", "今天中午吃什么？", true);
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
